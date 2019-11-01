@@ -1,5 +1,6 @@
 #include "network.h"
 #include "random.h"
+#include <cmath>
 
 void Network::resize(const size_t &n, double inhib) {
     size_t old = size();
@@ -127,4 +128,74 @@ void Network::print_traj(const int time, const std::map<std::string, size_t> &_n
                 break;
             }
     (*_out) << std::endl;
+}
+
+
+std::pair<size_t, double> Network::degree(const size_t& indice) const
+{
+	double sum_link(0) ;
+	for(auto neighbor : neighbors(indice))
+	{
+		sum_link+=neighbor.second ;
+	}
+       
+	return std::pair<size_t, double> (neighbors(indice).size(), sum_link) ;
+}
+
+std::set<size_t> Network::step(const std::vector<double>& tab)
+{
+	std::set<size_t> firing_indice ;
+	for(size_t i(0); i<neurons.size() ; ++i)
+	{
+		if(neurons[i].firing())
+		{
+			firing_indice.insert(i) ;
+			neurons[i].reset() ;
+		}
+		
+
+		std::vector<std::pair<size_t, double> > neighbor (neighbors(i)) ;
+		double excitator_sum(0) ;
+		double inhibitor_sum(0) ;
+		double w(tab[i]) ;
+		
+		for(size_t j(0); j<neighbor.size(); ++j)
+		{
+			
+			if (firing_indice.count(j)==1)
+			{
+				if(neurons[j].is_inhibitory())
+				{
+					inhibitor_sum+=neighbor[j].second ; 
+				}
+				else
+				{
+					excitator_sum+=neighbor[i].second ;
+					
+				}
+			}
+		}
+		
+		if(neurons[i].is_inhibitory())
+		{
+			w*=0.4 ;
+		}
+		neurons[i].input(w+0.5*excitator_sum+inhibitor_sum) ;
+		neurons[i].step();
+	}
+	return firing_indice ;
+}
+	
+ 
+std::vector<std::pair<size_t, double> > Network::neighbors(const size_t& indice) const
+{
+		std::vector<std::pair<size_t, double> > neighbors_tab ;
+		linkmap::const_iterator i;
+		
+		for (i =links.lower_bound({indice,0}); i!=links.end() and (i->first).first==indice; ++i)
+       {
+
+				neighbors_tab.push_back({(i->first).second, i->second}) ;
+	   }
+	   return neighbors_tab ;
 }
