@@ -152,8 +152,11 @@ std::set<size_t> Network::step(const std::vector<double>& tab)
 			firing_indice.insert(i) ;
 			neurons[i].reset() ;
 		}
-		
+	}
 
+		
+	for(size_t i(0); i<neurons.size() ; ++i)
+	{	
 		std::vector<std::pair<size_t, double> > neighbor (neighbors(i)) ;
 		double excitator_sum(0) ;
 		double inhibitor_sum(0) ;
