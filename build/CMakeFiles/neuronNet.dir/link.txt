@@ -1,1 +1,0 @@
-/usr/bin/c++   -std=c++11 -g -W -Wall -Wextra  -rdynamic CMakeFiles/neuronNet.dir/src/main.cpp.o CMakeFiles/neuronNet.dir/src/network.cpp.o CMakeFiles/neuronNet.dir/src/neuron.cpp.o CMakeFiles/neuronNet.dir/src/random.cpp.o CMakeFiles/neuronNet.dir/src/simulation.cpp.o  -o neuronNet  -L/home/tvannier/myfiles/Programmation/BA3/NeuronNet/lib 
